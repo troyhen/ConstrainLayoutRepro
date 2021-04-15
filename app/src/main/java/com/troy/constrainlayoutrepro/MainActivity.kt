@@ -47,7 +47,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.google.accompanist.coil.CoilImage
 import com.thedeanda.lorem.Lorem
 import com.thedeanda.lorem.LoremIpsum
-import com.troy.constrainlayoutrepro.ui.theme.ConstrainLayoutReproTheme
+import com.troy.constrainlayoutrepro.ui.theme.AppTheme
 import java.util.Date
 import kotlin.random.Random
 
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ConstrainLayoutReproTheme {
+            AppTheme {
                 Screen()
             }
         }
@@ -355,18 +355,18 @@ fun RowsAndColumns(item: Item) {
 
 @Composable
 fun DateHeader(item: Item, modifier: Modifier = Modifier) {
-    Box(modifier.padding(top = 2.dp)) {
+    Box(modifier) {
         if (item.showDate) {
-            Text(DateFormat.getLongDateFormat(LocalContext.current).format(Date()))
+            Text(DateFormat.getLongDateFormat(LocalContext.current).format(Date()), Modifier.padding(top = 2.dp))
         }
     }
 }
 
 @Composable
 fun ImageCard(item: Item, modifier: Modifier = Modifier) {
-    Box(modifier.padding(top = 2.dp)) {
+    Box(modifier) {
         if (item.showImage) {
-            Card(backgroundColor = MaterialTheme.colors.background) {
+            Card(Modifier.padding(top = 2.dp), backgroundColor = MaterialTheme.colors.background) {
                 CoilImage(item.imageUrl, "Image", Modifier.fillMaxWidth(), contentScale = ContentScale.Crop)
             }
         }
@@ -375,9 +375,9 @@ fun ImageCard(item: Item, modifier: Modifier = Modifier) {
 
 @Composable
 fun LinkLine(item: Item, modifier: Modifier = Modifier) {
-    Box(modifier.padding(top = 2.dp)) {
+    Box(modifier) {
         if (item.showLink) {
-            Text("Link to more")
+            Text("Link to more", Modifier.padding(top = 2.dp))
         }
     }
 }
@@ -393,9 +393,9 @@ fun OptionsMenu(show: Boolean = false, onClose: () -> Unit) {
 
 @Composable
 fun PreviewCard(item: Item, modifier: Modifier = Modifier) {
-    Box(modifier.padding(top = 2.dp)) {
+    Box(modifier) {
         if (item.showPreview) {
-            Card(backgroundColor = MaterialTheme.colors.background) {
+            Card(Modifier.padding(top = 2.dp), backgroundColor = MaterialTheme.colors.background) {
                 Icon(
                     imageVector = Icons.Filled.Email, "Preview",
                     Modifier
@@ -418,9 +418,9 @@ fun ProfileIcon(item: Item, modifier: Modifier = Modifier) {
 
 @Composable
 fun ReferenceCard(item: Item, modifier: Modifier = Modifier) {
-    Box(modifier.padding(top = 2.dp)) {
+    Box(modifier) {
         if (item.showReference) {
-            Card(backgroundColor = MaterialTheme.colors.background) {
+            Card(Modifier.padding(top = 2.dp), backgroundColor = MaterialTheme.colors.background) {
                 Column {
                     CoilImage(data = item.referenceUrl, "Reference", Modifier.fillMaxWidth(), contentScale = ContentScale.Crop)
                     Text(text = item.title, Modifier.padding(horizontal = 6.dp), style = MaterialTheme.typography.subtitle1)
@@ -432,9 +432,9 @@ fun ReferenceCard(item: Item, modifier: Modifier = Modifier) {
 
 @Composable
 fun TextCard(item: Item, modifier: Modifier = Modifier) {
-    Box(modifier.padding(top = 2.dp)) {
+    Box(modifier) {
         if (item.showText) {
-            Card(Modifier.align(if (item.isOwned) Alignment.TopEnd else Alignment.TopStart)) {
+            Card(Modifier.padding(top = 2.dp).align(if (item.isOwned) Alignment.TopEnd else Alignment.TopStart)) {
                 Text(item.text, Modifier.padding(8.dp))
             }
         }
@@ -443,23 +443,23 @@ fun TextCard(item: Item, modifier: Modifier = Modifier) {
 
 @Composable
 fun UserHeader(item: Item, modifier: Modifier = Modifier) {
-    Box(modifier.padding(top = 4.dp)) {
+    Box(modifier) {
         if (item.showHeader) {
-            Text(item.user, style = MaterialTheme.typography.caption)
+            Text(item.user, Modifier.padding(top = 4.dp), style = MaterialTheme.typography.caption)
         }
     }
 }
 
 @Composable
 fun WarningIcon(item: Item, modifier: Modifier = Modifier) {
-    Box(modifier.padding(4.dp)) {
+    Box(modifier) {
         if (item.showWarning) {
             val iconModifier = if (item.isOwned) {
                 Modifier.align(Alignment.CenterEnd)
             } else {
                 Modifier.align(Alignment.CenterStart)
             }
-            Icon(imageVector = Icons.Filled.Warning, "Warning", iconModifier, MaterialTheme.colors.error)
+            Icon(imageVector = Icons.Filled.Warning, "Warning", iconModifier.padding(4.dp), MaterialTheme.colors.error)
         }
     }
 }
