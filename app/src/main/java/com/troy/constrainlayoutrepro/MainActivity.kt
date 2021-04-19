@@ -113,6 +113,7 @@ fun HomeScreen(title: String, onNavigate: (Nav) -> Unit) {
                 Text("Access listState during Compose", Modifier.weight(1f))
                 Switch(checked = Nav.accessListState.value, { Nav.accessListState.value = it })
             }
+            Spacer(modifier = Modifier.height(20.dp))
             TextButton(onClick = { onNavigate(Nav.CONSTRAINT_LAYOUT_1) }, Modifier.padding(20.dp)) {
                 Text("ConstraintLayout with Barriers")
             }
