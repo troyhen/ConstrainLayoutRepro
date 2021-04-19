@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -24,6 +25,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
@@ -33,6 +35,8 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,7 +71,11 @@ enum class Nav(val title: String) {
     HOME("ConstrainLayout Bug Demo"),
     CONSTRAINT_LAYOUT_1("ConstrainLayout with Barriers"),
     CONSTRAINT_LAYOUT_2("ConstrainLayout without Barriers"),
-    ROWS_AND_COLUMNS("Rows and Columns")
+    ROWS_AND_COLUMNS("Rows and Columns");
+
+    companion object {
+        lateinit var accessListState: MutableState<Boolean>
+    }
 }
 
 @Composable
@@ -93,6 +101,7 @@ fun HomeScreen(title: String, onNavigate: (Nav) -> Unit) {
             Text(title)
         })
     }) {
+        Nav.accessListState = remember { mutableStateOf(true) }
         Column(
             Modifier
                 .padding(32.dp)
@@ -100,6 +109,10 @@ fun HomeScreen(title: String, onNavigate: (Nav) -> Unit) {
         ) {
             Text("This is to demonstrate the scrolling problems we found when using ConstraintLayout within LazyColumn items")
             Spacer(modifier = Modifier.height(20.dp))
+            Row {
+                Text("Access listState during Compose", Modifier.weight(1f))
+                Switch(checked = Nav.accessListState.value, { Nav.accessListState.value = it })
+            }
             TextButton(onClick = { onNavigate(Nav.CONSTRAINT_LAYOUT_1) }, Modifier.padding(20.dp)) {
                 Text("ConstraintLayout with Barriers")
             }
@@ -127,7 +140,8 @@ fun ListOfItems(items: List<Item>, nav: Nav, onBack: () -> Unit) {
             }
         })
     }) {
-        LazyColumn(reverseLayout = true) {
+        val listState = rememberLazyListState()
+        LazyColumn(state = listState, reverseLayout = true) {
             items(items.size, key = { items[it].id }) { index ->
                 val item = items[index]
                 when (nav) {
@@ -136,6 +150,19 @@ fun ListOfItems(items: List<Item>, nav: Nav, onBack: () -> Unit) {
                     Nav.CONSTRAINT_LAYOUT_2 -> ConstraintLayoutWithoutBarriers(item)
                     Nav.ROWS_AND_COLUMNS -> RowsAndColumns(item)
                 }
+            }
+        }
+        var index = 0
+        var offset = 0
+        if (Nav.accessListState.value) {
+            // Here we access ListState within the Composable
+            index = listState.firstVisibleItemIndex
+            offset = listState.firstVisibleItemScrollOffset
+        } else {
+            // Here we access ListState in a SideEffect
+            SideEffect {
+                index = listState.firstVisibleItemIndex
+                offset = listState.firstVisibleItemScrollOffset
             }
         }
     }
@@ -323,10 +350,12 @@ fun RowsAndColumns(item: Item) {
         DateHeader(item, Modifier.align(Alignment.CenterHorizontally))
         Row {
             if (item.isOwned) {
-                WarningIcon(item,
+                WarningIcon(
+                    item,
                     Modifier
                         .weight(1f)
-                        .align(Alignment.CenterVertically))
+                        .align(Alignment.CenterVertically)
+                )
             }
             ProfileIcon(item, Modifier.align(Alignment.Bottom))
             Column(
@@ -343,10 +372,12 @@ fun RowsAndColumns(item: Item) {
                 }
             }
             if (!item.isOwned) {
-                WarningIcon(item,
+                WarningIcon(
+                    item,
                     Modifier
                         .weight(1f)
-                        .align(Alignment.CenterVertically))
+                        .align(Alignment.CenterVertically)
+                )
             }
         }
     }
@@ -434,7 +465,11 @@ fun ReferenceCard(item: Item, modifier: Modifier = Modifier) {
 fun TextCard(item: Item, modifier: Modifier = Modifier) {
     Box(modifier) {
         if (item.showText) {
-            Card(Modifier.padding(top = 2.dp).align(if (item.isOwned) Alignment.TopEnd else Alignment.TopStart)) {
+            Card(
+                Modifier
+                    .padding(top = 2.dp)
+                    .align(if (item.isOwned) Alignment.TopEnd else Alignment.TopStart)
+            ) {
                 Text(item.text, Modifier.padding(8.dp))
             }
         }
