@@ -45,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -68,7 +69,7 @@ class MainActivity : ComponentActivity() {
 }
 
 enum class Nav(val title: String) {
-    HOME("ConstrainLayout Bug Demo"),
+    HOME("ConstraintLayout Bug Demo"),
     CONSTRAINT_LAYOUT_1("ConstrainLayout with Barriers"),
     CONSTRAINT_LAYOUT_2("ConstrainLayout without Barriers"),
     ROWS_AND_COLUMNS("Rows and Columns");
@@ -115,13 +116,13 @@ fun HomeScreen(title: String, onNavigate: (Nav) -> Unit) {
             }
             Spacer(modifier = Modifier.height(20.dp))
             TextButton(onClick = { onNavigate(Nav.CONSTRAINT_LAYOUT_1) }, Modifier.padding(20.dp)) {
-                Text("ConstraintLayout with Barriers")
+                Text("ConstraintLayout with Barriers", textAlign = TextAlign.Center)
             }
             TextButton(onClick = { onNavigate(Nav.CONSTRAINT_LAYOUT_2) }, Modifier.padding(20.dp)) {
-                Text("ConstraintLayout without Barriers")
+                Text("ConstraintLayout without Barriers", textAlign = TextAlign.Center)
             }
             TextButton(onClick = { onNavigate(Nav.ROWS_AND_COLUMNS) }, Modifier.padding(20.dp)) {
-                Text("Rows and Columns")
+                Text("Rows and Columns", textAlign = TextAlign.Center)
             }
         }
     }
